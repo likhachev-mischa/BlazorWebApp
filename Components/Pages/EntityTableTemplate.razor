@@ -1,0 +1,53 @@
+﻿@typeparam TEntity
+@typeparam TView;
+
+<div>
+	@EntityEditForm
+	@if (Entities == null)
+	{
+		<p>
+			<em>Loading...</em>
+		</p>
+	}
+	else
+	{
+		<table class="table">
+			<thead>
+			<tr>
+				@EntityHeaderEntry
+			</tr>
+			</thead>
+			@PageButtons
+			<tbody>
+			@foreach (var entity in Entities)
+			{
+				<tr>
+					@EntityTableEntry(entity)
+				</tr>
+			}
+			</tbody>
+		</table>
+	}
+
+</div>
+
+@code
+{
+	[Parameter, EditorRequired]
+	public TView View { get; set; }
+
+	[Parameter, EditorRequired]
+	public RenderFragment<TEntity> EntityTableEntry { get; set; }
+
+	[Parameter, EditorRequired]
+	public RenderFragment EntityHeaderEntry { get; set; }
+
+	[Parameter, EditorRequired]
+	public RenderFragment PageButtons { get; set; }
+
+	[Parameter, EditorRequired]
+	public RenderFragment EntityEditForm { get; set; }
+
+	[Parameter, EditorRequired]
+	public IReadOnlyList<TEntity>? Entities { get; set; }
+}

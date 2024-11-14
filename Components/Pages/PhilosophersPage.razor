@@ -1,0 +1,77 @@
+﻿@page "/philosophersPage"
+@rendermode InteractiveServer
+@using Lab
+@using View
+
+@inherits EntityBlazorPage<Philosopher>
+<h3>PhilosophersPage</h3>
+
+<EntityTableTemplate TEntity="Philosopher" TView="EntityView<Philosopher>" Entities="m_displayedEntityList" View="View">
+	<EntityEditForm>
+		<EditForm Model="@m_philosopherData" OnSubmit="CreateEntity">
+			<p>
+				Name:<br/>
+				<InputText @bind-Value="m_philosopherData.Name"/>
+			</p>
+			<p>
+				Dob:<br/>
+				<InputDate @bind-Value="m_philosopherData.Dob"/>
+			</p>
+			<p>
+				Dod:<br/>
+				<InputDate @bind-Value="m_philosopherData.Dod"/>
+			</p>
+			<p>
+				<button type="submit">Create Philosopher</button>
+			</p>
+		</EditForm>
+		<PageButtons>
+			<button class="btn btn-primary" disabled ="@m_isDecreasePageDisabled" @onclick="DecreasePage">Prev Page</button>
+			<button class="btn btn-primary" disabled ="@m_isIncreasePageDisabled" @onclick="IncreasePage">Next Page</button>
+		</PageButtons>
+	</EntityEditForm>
+
+	<EntityHeaderEntry>
+		<th>Id</th>
+		<th>Name</th>
+		<th>Dob</th>
+		<th>Dod</th>
+		<th>Delete</th>
+	</EntityHeaderEntry>
+
+	<EntityTableEntry>
+		<td>@context.PhilosopherId</td>
+		<td>@context.PhilosopherName</td>
+		<td>@context.PhilosopherDob</td>
+		<td>@context.PhilosopherDod</td>
+		<td>
+			<button class="btn btn-primary" @onclick="() => DeleteEntityAsync(context.PhilosopherId)">Delete</button>
+		</td>
+	</EntityTableEntry>
+
+</EntityTableTemplate>
+
+
+@code
+{
+	PhilosopherData m_philosopherData = new();
+	
+
+	protected override async Task CreateEntity()
+	{
+		await View.CreateEntityAsync(new Philosopher()
+		{
+			PhilosopherName = m_philosopherData.Name,
+			PhilosopherDob = m_philosopherData.Dob, PhilosopherDod = m_philosopherData.Dod
+		});
+		await FetchData();
+	}
+
+	private class PhilosopherData
+	{
+		public string Name = "";
+		public DateOnly Dob;
+		public DateOnly Dod;
+	}
+
+}

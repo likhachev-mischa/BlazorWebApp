@@ -1,0 +1,80 @@
+﻿@page "/philosophiesPage"
+@rendermode InteractiveServer
+@using Lab
+@using View
+<h3>PhilosophiesPage</h3>
+
+<EntityTableTemplate TEntity="Philosophy" TView="EntityView<Philosophy>" Entities="m_philosophies" View="PhilosophyView">
+	<EntityEditForm>
+		<p>@m_message</p>
+		<EditForm Model="@m_philosophyData" OnSubmit="ValidateEntity">
+			<p>
+				Name:<br/>
+				<InputText @bind-Value="m_philosophyData.Name"/>
+			</p>
+
+			<p>
+				<button type="submit">Create Philosophy</button>
+			</p>
+		</EditForm>
+	</EntityEditForm>
+	<EntityHeaderEntry>
+		<th>Id</th>
+		<th>Name</th>
+		<th>Delete</th>
+	</EntityHeaderEntry>
+	<EntityTableEntry>
+		<td>@context.PhilosophyId</td>
+		<td>@context.PhilosophyName</td>
+		<td>
+			<button class="btn btn-primary" @onclick="() => DeleteEntityAsync(context.PhilosophyId)">Delete</button>
+		</td>
+	</EntityTableEntry>
+</EntityTableTemplate>
+
+@code
+{
+	[Inject]
+	public EntityView<Philosophy> PhilosophyView { get; set; }
+
+	PhilosophyData m_philosophyData = new();
+
+	private List<Philosophy>? m_philosophies;
+
+	private string m_message = "";
+
+	protected override async Task OnInitializedAsync()
+	{
+		m_philosophies = await PhilosophyView.RequestEntitiesAsync();
+		StateHasChanged();
+	}
+
+	private void ValidateEntity()
+	{
+		CreateEntityAsync();
+	}
+
+	private async void CreateEntityAsync()
+	{
+		await PhilosophyView.CreateEntityAsync(new Philosophy()
+		{
+			PhilosophyName = m_philosophyData.Name,
+		});
+		m_philosophies = await PhilosophyView.RequestEntitiesAsync();
+		StateHasChanged();
+	}
+
+	private async void DeleteEntityAsync(int id)
+	{
+		await PhilosophyView.DeleteEntityAsync(id);
+		m_philosophies = await PhilosophyView.RequestEntitiesAsync();
+		StateHasChanged();
+	}
+
+
+	private class PhilosophyData
+	{
+		public string Name = "";
+	}
+
+}

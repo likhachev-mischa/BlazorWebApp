@@ -1,0 +1,121 @@
+﻿@page "/PsCsPage"
+@rendermode InteractiveServer
+@using Lab
+@using View
+<h3>PCCsPage</h3>
+
+<EntityTableTemplate TEntity="PhilosopherStudentConnection" TView="EntityView<PhilosopherStudentConnection>" Entities="m_pscs" View="PSCView">
+	<EntityEditForm>
+		<p>@m_message</p>
+		<EditForm Model="@m_pscData" OnSubmit="ValidateEntity">
+			<p>
+				Teacher Id:<br/>
+				<InputNumber @bind-Value="m_pscData.TeacherId"/>
+			</p>
+			<p>
+				Student Id:<br/>
+				<InputNumber @bind-Value="m_pscData.StudentId"/>
+			</p>
+			<p>
+				Start Date:<br/>
+				<InputDate @bind-Value="m_pscData.StartDate"/>
+			</p>
+			<p>
+				Finish Date:<br/>
+				<InputDate @bind-Value="m_pscData.FinishDate"/>
+			</p>
+
+
+			<p>
+				<button type="submit">Create PCC</button>
+			</p>
+		</EditForm>
+	</EntityEditForm>
+	<EntityHeaderEntry>
+		<th>Id</th>
+		<th>Teacher Id</th>
+		<th>Student Id</th>
+		<th>Start date</th>
+		<th>Finish date</th>
+	</EntityHeaderEntry>
+	<EntityTableEntry>
+		<td>@context.PhilosopherStudentConnectionId</td>
+		<td>@context.Teacher.PhilosopherId</td>
+		<td>@context.Student.PhilosopherId</td>
+		<td>@context.PeriodStart</td>
+		<td>@context.PeriodEnd</td>
+		<td>
+			<button class="btn btn-primary" @onclick="() => DeleteEntityAsync(context.PhilosopherStudentConnectionId)">Delete</button>
+		</td>
+	</EntityTableEntry>
+</EntityTableTemplate>
+
+@code
+{
+	[Inject]
+	public EntityView<PhilosopherStudentConnection> PSCView { get; set; }
+
+	PSCData m_pscData = new();
+
+	private List<PhilosopherStudentConnection>? m_pscs;
+
+	private string m_message = "";
+
+	protected override async Task OnInitializedAsync()
+	{
+		m_pscs = await PSCView.RequestEntitiesAsync();
+		StateHasChanged();
+	}
+
+	private void ValidateEntity()
+	{
+		m_message = "";
+		PSCView.UpdateReferencedEntities(m_pscData.TeacherId, typeof(Philosopher));
+		PSCView.UpdateReferencedEntities(m_pscData.StudentId, typeof(Philosopher));
+		var list = (Philosopher?[])PSCView.ReferencedEntities[typeof(Philosopher)];
+		if (list == null)
+		{
+			m_message = "Invalid philosopher ids!";
+		}
+		else if (list[0] == null || list[1] == null)
+		{
+			m_message = "Invalid philosopher id!";
+		}
+		else
+		{
+			CreateEntityAsync();
+		}
+	}
+
+	private async void CreateEntityAsync()
+	{
+		var list = (Philosopher?[])PSCView.ReferencedEntities[typeof(Philosopher)];
+
+		await PSCView.CreateEntityAsync(new PhilosopherStudentConnection()
+		{
+			Teacher = list[0],
+			Student = list[1],
+			PeriodStart = m_pscData.StartDate,
+			PeriodEnd = m_pscData.FinishDate
+		});
+		m_pscs = await PSCView.RequestEntitiesAsync();
+		StateHasChanged();
+	}
+
+	private async void DeleteEntityAsync(int id)
+	{
+		await PSCView.DeleteEntityAsync(id);
+		m_pscs = await PSCView.RequestEntitiesAsync();
+		StateHasChanged();
+	}
+
+
+	private class PSCData
+	{
+		public int TeacherId;
+		public int StudentId;
+		public DateOnly StartDate;
+		public DateOnly FinishDate;
+	}
+
+}

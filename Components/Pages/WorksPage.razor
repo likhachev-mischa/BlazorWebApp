@@ -1,0 +1,89 @@
+﻿@page "/worksPage"
+@rendermode InteractiveServer
+@using Lab
+@using View
+@inherits EntityBlazorPage<Work>
+<h3>WorksPage</h3>
+
+<EntityTableTemplate TEntity="Work" TView="EntityView<Work>" Entities="m_displayedEntityList" View="View">
+	<EntityEditForm>
+		<p>@m_message</p>
+		<EditForm Model="@m_workData" OnSubmit="ValidateEntity">
+			<p>
+				Name:<br/>
+				<InputText @bind-Value="m_workData.Name"/>
+			</p>
+			<p>
+				Publishing Date:<br/>
+				<InputDate @bind-Value="m_workData.PublishingDate"/>
+			</p>
+			<p>
+				Philosopher Id:<br/>
+				<InputNumber @bind-Value="m_workData.PhilosopherId"/>
+			</p>
+
+			<p>
+				<button type="submit">Create Work</button>
+			</p>
+		</EditForm>
+	</EntityEditForm>
+	<EntityHeaderEntry>
+		<th>Id</th>
+		<th>Name</th>
+		<th>Publishing Date</th>
+		<th>Philosopher Id</th>
+		<th>Delete</th>
+	</EntityHeaderEntry>
+	<EntityTableEntry>
+		<td>@context.WorkId</td>
+		<td>@context.WorkName</td>
+		<td>@context.PublishingDate</td>
+		<td>@context.Philosopher.PhilosopherId</td>
+		<td>
+			<button class="btn btn-primary" @onclick="() => DeleteEntityAsync(context.WorkId)">Delete</button>
+		</td>
+	</EntityTableEntry>
+</EntityTableTemplate>
+
+@code
+{
+
+	WorkData m_workData = new();
+
+	private string m_message = "";
+
+	private async void ValidateEntity()
+	{
+		View.UpdateReferencedEntities(m_workData.PhilosopherId,typeof(Philosopher));
+		Philosopher? philosopher = (Philosopher?)View.ReferencedEntities[typeof(Philosopher)];
+
+		if (philosopher == null)
+		{
+			m_message = "Invalid philosopher id!";
+		}
+		else
+		{
+			m_message = "";
+			await CreateEntity();
+		}
+	}
+
+	protected override async Task CreateEntity()
+	{
+		await View.CreateEntityAsync(new Work()
+		{
+			WorkName = m_workData.Name,
+			PublishingDate = m_workData.PublishingDate,
+			Philosopher = (Philosopher)View.ReferencedEntities[typeof(Philosopher)]
+		});
+		await FetchData();
+	}
+
+	private class WorkData
+	{
+		public string Name = "";
+		public DateOnly PublishingDate;
+		public int PhilosopherId;
+	}
+
+}

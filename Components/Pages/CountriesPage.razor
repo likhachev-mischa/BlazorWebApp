@@ -1,0 +1,53 @@
+﻿@page "/countriesPage"
+@rendermode InteractiveServer
+@using Lab
+@using View
+@inherits EntityBlazorPage<Country> 
+<h3>CountriesPage</h3>
+
+
+<EntityTableTemplate TEntity="Country" TView="EntityView<Country>" Entities="m_displayedEntityList" View="View">
+	<EntityEditForm>
+		<EditForm Model="@m_countryData" OnSubmit="CreateEntity">
+			<p>
+				Name:<br/>
+				<InputText @bind-Value="m_countryData.Name"/>
+			</p>
+			<p>
+				<button type="submit">Create Country</button>
+			</p>
+		</EditForm>
+	</EntityEditForm>
+	<EntityHeaderEntry>
+		<th>Id</th>
+		<th>Name</th>
+		<th>Delete</th>
+	</EntityHeaderEntry>
+	<EntityTableEntry>
+		<td>@context.CountryId</td>
+		<td>@context.CountryName</td>
+		<td>
+			<button class="btn btn-primary" @onclick="() => DeleteEntityAsync(context.CountryId)">Delete</button>
+		</td>
+	</EntityTableEntry>
+</EntityTableTemplate>
+
+@code
+{
+	CountryData m_countryData = new();
+
+	private class CountryData
+	{
+		public string Name = "";
+	}
+
+	protected override async Task CreateEntity()
+	{
+		await View.CreateEntityAsync(new Country()
+		{
+			CountryName = m_countryData.Name
+		});
+		m_entityList = await View.RequestEntitiesAsync();
+		StateHasChanged();
+	}
+}

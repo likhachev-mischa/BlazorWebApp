@@ -1,0 +1,120 @@
+﻿@page "/PPCsPage"
+@rendermode InteractiveServer
+@using Lab
+@using View
+<h3>PPCsPage</h3>
+
+<EntityTableTemplate TEntity="PhilosopherPhilosophyConnection" TView="EntityView<PhilosopherPhilosophyConnection>" Entities="m_ppcs" View="PPCView">
+	<EntityEditForm>
+		<p>@m_message</p>
+		<EditForm Model="@m_pscData" OnSubmit="ValidateEntity">
+			<p>
+				Philosopher Id:<br/>
+				<InputNumber @bind-Value="m_pscData.PhilosopherId"/>
+			</p>
+			<p>
+				Philosophy Id:<br/>
+				<InputNumber @bind-Value="m_pscData.PhilosophyId"/>
+			</p>
+			<p>
+				Start Date:<br/>
+				<InputDate @bind-Value="m_pscData.StartDate"/>
+			</p>
+			<p>
+				Finish Date:<br/>
+				<InputDate @bind-Value="m_pscData.FinishDate"/>
+			</p>
+
+
+			<p>
+				<button type="submit">Create PCC</button>
+			</p>
+		</EditForm>
+	</EntityEditForm>
+	<EntityHeaderEntry>
+		<th>Id</th>
+		<th>Philosopher Id</th>
+		<th>Country Id</th>
+		<th>Start date</th>
+		<th>Finish date</th>
+	</EntityHeaderEntry>
+	<EntityTableEntry>
+		<td>@context.PhilosopherPhilosophyConnectionId</td>
+		<td>@context.Philosopher.PhilosopherId</td>
+		<td>@context.Philosophy.PhilosophyId</td>
+		<td>@context.PeriodStart</td>
+		<td>@context.PeriodEnd</td>
+		<td>
+			<button class="btn btn-primary"  @onclick="() => DeleteEntityAsync(context.PhilosopherPhilosophyConnectionId)">Delete</button>
+		</td>
+	</EntityTableEntry>
+</EntityTableTemplate>
+
+@code
+{
+	[Inject]
+	public EntityView<PhilosopherPhilosophyConnection> PPCView { get; set; }
+
+	PCCData m_pscData = new();
+
+	private List<PhilosopherPhilosophyConnection>? m_ppcs;
+
+	private string m_message = "";
+
+	protected override async Task OnInitializedAsync()
+	{
+		m_ppcs = await PPCView.RequestEntitiesAsync();
+		StateHasChanged();
+	}
+
+	private void ValidateEntity()
+	{
+		m_message = "";
+		PPCView.UpdateReferencedEntities(m_pscData.PhilosopherId, typeof(Philosopher));
+		PPCView.UpdateReferencedEntities(m_pscData.PhilosophyId, typeof(Philosophy));
+		Philosopher? philosopher = (Philosopher?)PPCView.ReferencedEntities[typeof(Philosopher)];
+		Philosophy? philosophy = (Philosophy?)PPCView.ReferencedEntities[typeof(Philosophy)];
+		if (philosopher == null)
+		{
+			m_message = "Invalid philosopher id!";
+		}
+		else if (philosophy == null)
+		{
+			m_message += " Invalid philosophy id!";
+		}
+		else
+		{
+			CreateEntityAsync();
+		}
+	}
+
+	private async void CreateEntityAsync()
+	{
+		await PPCView.CreateEntityAsync(new PhilosopherPhilosophyConnection()
+		{
+			Philosopher = (Philosopher)PPCView.ReferencedEntities[typeof(Philosopher)],
+			Philosophy = (Philosophy)PPCView.ReferencedEntities[typeof(Philosophy)],
+			PeriodStart = m_pscData.StartDate,
+			PeriodEnd = m_pscData.FinishDate
+		});
+		m_ppcs = await PPCView.RequestEntitiesAsync();
+		StateHasChanged();
+	}
+
+	private async void DeleteEntityAsync(int id)
+	{
+		await PPCView.DeleteEntityAsync(id);
+		m_ppcs = await PPCView.RequestEntitiesAsync();
+		StateHasChanged();
+	}
+
+
+	private class PCCData
+	{
+		public int PhilosopherId;
+		public int PhilosophyId;
+		public DateOnly StartDate;
+		public DateOnly FinishDate;
+	}
+
+}

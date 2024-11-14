@@ -1,0 +1,57 @@
+﻿<div class="top-row ps-3 navbar navbar-dark">
+	<div class="container-fluid">
+		<a class="navbar-brand" href="">BlazorApp</a>
+	</div>
+</div>
+
+<input type="checkbox" title="Navigation menu" class="navbar-toggler"/>
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+	<nav class="flex-column">
+		<div class="nav-item px-3">
+			<NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+				<span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+			</NavLink>
+		</div>
+
+		<div class="nav-item px-3">
+			<NavLink class="nav-link" href="philosophersPage">
+				<span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> PhilosophersPage
+			</NavLink>
+		</div>
+		<div class="nav-item px-3">
+			<NavLink class="nav-link" href="countriesPage">
+				<span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> CountriesPage
+			</NavLink>
+		</div>
+		<div class="nav-item px-3">
+			<NavLink class="nav-link" href="worksPage">
+				<span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> WorksPage
+			</NavLink>
+		</div>
+			<div class="nav-item px-3">
+			<NavLink class="nav-link" href="philosophiesPage">
+				<span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> PhilosophiesPage
+			</NavLink>
+		</div>
+
+		<div class="nav-item px-3">
+			<NavLink class="nav-link" href="PCCsPage">
+				<span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> PCCsPage
+			</NavLink>
+		</div>
+		<div class="nav-item px-3">
+			<NavLink class="nav-link" href="PSCsPage">
+				<span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> PSCsPage
+			</NavLink>
+		</div>
+			<div class="nav-item px-3">
+			<NavLink class="nav-link" href="PPCsPage">
+				<span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> PPCsPage
+			</NavLink>
+		</div>
+
+
+
+	</nav>
+</div>

@@ -1,0 +1,120 @@
+﻿@page "/PCCsPage"
+@rendermode InteractiveServer
+@using Lab
+@using View
+<h3>PCCsPage</h3>
+
+<EntityTableTemplate TEntity="PhilosopherCountryConnection" TView="EntityView<PhilosopherCountryConnection>" Entities="m_pccs" View="PCCView">
+	<EntityEditForm>
+		<p>@m_message</p>
+		<EditForm Model="@m_pccData" OnSubmit="ValidateEntity">
+			<p>
+				Philosopher Id:<br/>
+				<InputNumber @bind-Value="m_pccData.PhilosopherId"/>
+			</p>
+			<p>
+				Country Id:<br/>
+				<InputNumber @bind-Value="m_pccData.CountryId"/>
+			</p>
+			<p>
+				Start Date:<br/>
+				<InputDate @bind-Value="m_pccData.StartDate"/>
+			</p>
+			<p>
+				Finish Date:<br/>
+				<InputDate @bind-Value="m_pccData.FinishDate"/>
+			</p>
+
+
+			<p>
+				<button type="submit">Create PCC</button>
+			</p>
+		</EditForm>
+	</EntityEditForm>
+	<EntityHeaderEntry>
+		<th>Id</th>
+		<th>Philosopher Id</th>
+		<th>Country Id</th>
+		<th>Start date</th>
+		<th>Finish date</th>
+	</EntityHeaderEntry>
+	<EntityTableEntry>
+		<td>@context.PhilosopherCountryConnectionId</td>
+		<td>@context.Philosopher.PhilosopherId</td>
+		<td>@context.Country.CountryId</td>
+		<td>@context.PeriodStart</td>
+		<td>@context.PeriodEnd</td>
+		<td>
+			<button class="btn btn-primary" @onclick="() => DeleteEntityAsync(context.PhilosopherCountryConnectionId)">Delete</button>
+		</td>
+	</EntityTableEntry>
+</EntityTableTemplate>
+
+@code
+{
+	[Inject]
+	public EntityView<PhilosopherCountryConnection> PCCView { get; set; }
+
+	PCCData m_pccData = new();
+
+	private List<PhilosopherCountryConnection>? m_pccs;
+
+	private string m_message = "";
+
+	protected override async Task OnInitializedAsync()
+	{
+		m_pccs = await PCCView.RequestEntitiesAsync();
+		StateHasChanged();
+	}
+
+	private void ValidateEntity()
+	{
+		m_message = "";
+		PCCView.UpdateReferencedEntities(m_pccData.PhilosopherId, typeof(Philosopher));
+		PCCView.UpdateReferencedEntities(m_pccData.CountryId, typeof(Country));
+		Philosopher? philosopher = (Philosopher?)PCCView.ReferencedEntities[typeof(Philosopher)];
+		Country? country = (Country?)PCCView.ReferencedEntities[typeof(Country)];
+		if (philosopher == null)
+		{
+			m_message = "Invalid philosopher id!";
+		}
+		else if (country == null)
+		{
+			m_message += " Invalid country id!";
+		}
+		else
+		{
+			CreateEntityAsync();
+		}
+	}
+
+	private async void CreateEntityAsync()
+	{
+		await PCCView.CreateEntityAsync(new PhilosopherCountryConnection()
+		{
+			Philosopher = (Philosopher)PCCView.ReferencedEntities[typeof(Philosopher)],
+			Country = (Country)PCCView.ReferencedEntities[typeof(Country)],
+			PeriodStart = m_pccData.StartDate,
+			PeriodEnd = m_pccData.FinishDate
+		});
+		m_pccs = await PCCView.RequestEntitiesAsync();
+		StateHasChanged();
+	}
+
+	private async void DeleteEntityAsync(int id)
+	{
+		await PCCView.DeleteEntityAsync(id);
+		m_pccs = await PCCView.RequestEntitiesAsync();
+		StateHasChanged();
+	}
+
+
+	private class PCCData
+	{
+		public int PhilosopherId;
+		public int CountryId;
+		public DateOnly StartDate;
+		public DateOnly FinishDate;
+	}
+
+}
