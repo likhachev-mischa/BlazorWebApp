@@ -9,6 +9,8 @@ namespace Controller
 		{
 		}
 
+
+
 		protected override void OnEntityDeleted(int id)
 		{
 			Country? country = m_model.GetCountry(id);
@@ -23,9 +25,14 @@ namespace Controller
 			m_view.EntityCreateTask = m_model.AddCountryAsync(obj);
 		}
 
-		protected override void OnEntityRequested()
+		protected override void OnEntitiesRequested()
 		{
-			m_view.EntityRequestTask = m_model.GetCountriesAsync();
+			m_view.EntitiesRequestTask = m_model.GetCountriesAsync();
+		}
+
+		protected override void OnEntityRequested(int id)
+		{
+			m_view.EntityRequestTask = m_model.GetCountryAsync(id);
 		}
 	}
 }

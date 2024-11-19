@@ -44,9 +44,9 @@ namespace BlazorApp.Controller
 		}
 
 
-		protected override void OnEntityRequested()
+		protected override void OnEntitiesRequested()
 		{
-			m_view.EntityRequestTask = m_model.GetPccsAsync();
+			m_view.EntitiesRequestTask = m_model.GetPccsAsync();
 		}
 	}
 }

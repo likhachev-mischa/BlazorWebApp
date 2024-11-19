@@ -16,6 +16,11 @@ namespace BlazorApp.Controller
 			m_view.ReferencedEntities[typeof(Philosopher)] = philosopher;
 		}
 
+		protected override void OnEntityRequested(int id)
+		{
+			m_view.EntityRequestTask = m_model.GetWorkAsync(id);
+		}
+
 		protected override void OnEntityDeleted(int id)
 		{
 			Work? work = m_model.GetWork(id);
@@ -31,9 +36,9 @@ namespace BlazorApp.Controller
 		}
 
 
-		protected override void OnEntityRequested()
+		protected override void OnEntitiesRequested()
 		{
-			m_view.EntityRequestTask = m_model.GetWorksAsync();
+			m_view.EntitiesRequestTask = m_model.GetWorksAsync();
 		}
 	}
 }

@@ -33,7 +33,7 @@ namespace BlazorApp.Components.Pages
 			UpdateButtonStatus();
 		}
 
-		protected async Task FetchData()
+		protected virtual async Task FetchData()
 		{
 			m_entityList = await View.RequestEntitiesAsync();
 			UpdateDisplayList();

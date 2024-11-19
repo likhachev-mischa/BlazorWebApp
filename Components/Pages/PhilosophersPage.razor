@@ -21,10 +21,41 @@
 				Dod:<br/>
 				<InputDate @bind-Value="m_philosopherData.Dod"/>
 			</p>
+
+			<ReferencedEntityTemplate TEntity="Philosophy" ReferencedEntity="m_referencedPhilosophy">
+				<EntityOption Context="optionContext">
+					<option value="@optionContext.PhilosophyId">@optionContext.PhilosophyName</option>
+				</EntityOption>
+				<ReferencedEntityEditForm>
+					Start date: <InputDate @bind-Value="m_referencedPhilosophyData.StartDate"/>
+					Finish date: <InputDate @bind-Value="m_referencedPhilosophyData.FinishDate"/>
+				</ReferencedEntityEditForm>
+			</ReferencedEntityTemplate>
+
+			<ReferencedEntityTemplate TEntity="Country" ReferencedEntity="m_referencedCountry">
+				<EntityOption Context="optionContext">
+					<option value="@optionContext.CountryId">@optionContext.CountryName</option>
+				</EntityOption>
+				<ReferencedEntityEditForm>
+					Start date: <InputDate @bind-Value="m_referencedCountryData.StartDate"/>
+					Finish date: <InputDate @bind-Value="m_referencedCountryData.FinishDate"/>
+				</ReferencedEntityEditForm>
+			</ReferencedEntityTemplate>
+
 			<p>
 				<button type="submit">Create Philosopher</button>
 			</p>
 		</EditForm>
+		<p>
+			Filter:
+			<ReferencedEntityTemplate TEntity="Country" ReferencedEntity="m_referencedCountryFilter">
+				<EntityOption Context="optionContext">
+					<option value="@optionContext.CountryId">@optionContext.CountryName</option>
+				</EntityOption>
+			</ReferencedEntityTemplate>
+			<button class="btn btn-primary" @onclick="ApplyCountryFilter">Apply</button>
+		</p>
+
 	</EntityEditForm>
 	<PageButtons>
 		<button class="btn btn-primary" disabled="@m_isDecreasePageDisabled" @onclick="DecreasePage">Prev Page</button>
@@ -49,30 +80,5 @@
 		</td>
 	</EntityDeleteButton>
 
-
 </EntityTableTemplate>
 
-
-@code
-{
-	PhilosopherData m_philosopherData = new();
-
-	private class PhilosopherData
-	{
-		public string Name = "";
-		public DateOnly Dob;
-		public DateOnly Dod;
-	}
-
-	protected override async Task CreateEntity()
-	{
-		await View.CreateEntityAsync(new Philosopher()
-		{
-			PhilosopherName = m_philosopherData.Name,
-			PhilosopherDob = m_philosopherData.Dob, PhilosopherDod = m_philosopherData.Dod
-		});
-		await FetchData();
-	}
-
-
-}

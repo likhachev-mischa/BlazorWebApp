@@ -24,9 +24,9 @@ namespace Controller
 		}
 
 
-		protected override void OnEntityRequested()
+		protected override void OnEntitiesRequested()
 		{
-			m_view.EntityRequestTask = m_model.GetPhilosophersAsync();
+			m_view.EntitiesRequestTask = m_model.GetPhilosophersAsync();
 		}
 	}
 }

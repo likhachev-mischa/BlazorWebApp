@@ -37,22 +37,3 @@
 		</td>
 	</EntityDeleteButton>
 </EntityTableTemplate>
-
-@code
-{
-	CountryData m_countryData = new();
-
-	private class CountryData
-	{
-		public string Name = "";
-	}
-
-	protected override async Task CreateEntity()
-	{
-		await View.CreateEntityAsync(new Country()
-		{
-			CountryName = m_countryData.Name
-		});
-		await FetchData();
-	}
-}

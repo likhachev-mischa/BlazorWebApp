@@ -38,23 +38,3 @@
 		</td>
 	</EntityDeleteButton>
 </EntityTableTemplate>
-
-@code
-{
-	PhilosophyData m_philosophyData = new();
-
-	protected override async Task CreateEntity()
-	{
-		await View.CreateEntityAsync(new Philosophy()
-		{
-			PhilosophyName = m_philosophyData.Name,
-		});
-		await FetchData();
-	}
-
-	private class PhilosophyData
-	{
-		public string Name = "";
-	}
-
-}

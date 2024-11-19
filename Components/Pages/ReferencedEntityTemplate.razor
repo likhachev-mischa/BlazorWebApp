@@ -1,0 +1,42 @@
+﻿@typeparam TEntity where TEntity : class
+
+<div>
+	@if (ReferencedEntity != null)
+	{
+		<p>
+			Select @ReferencedEntity.EntityTypeName
+			@if (ReferencedEntity.EntityList != null)
+			{
+				<select @bind="ReferencedEntity.ChosenEntityId">
+					<option value="-1">None</option>
+					@foreach (var entity in ReferencedEntity.EntityList)
+					{
+						@EntityOption(entity)
+					}
+				</select>
+			}
+			else
+			{
+				<em>loading @ReferencedEntity.EntityTypeName s...</em>
+			}
+			@ReferencedEntityEditForm
+		</p>
+	}
+	else
+	{
+		<em>loading referenced entity data...</em>
+	}
+</div>
+
+@code {
+
+	[Parameter, EditorRequired]
+	public RenderFragment<TEntity> EntityOption { get; set; }
+
+	[Parameter]
+	public RenderFragment ReferencedEntityEditForm { get; set; }
+
+	[Parameter, EditorRequired]
+	public ReferencedEntity<TEntity>? ReferencedEntity { get; set; }
+
+}

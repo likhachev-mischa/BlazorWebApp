@@ -5,11 +5,13 @@ namespace View
 	public class EntityView<TEntity> where TEntity : class
 	{
 		public event Action? EntitiesRequested;
+		public event Action<int>? EntityRequested;
 		public event Action<int>? EntityDeleted;
 		public event Action<TEntity>? EntityCreated;
 		public event Action<int, Type>? ReferencedEntitiesUpdateRequest;
 
-		public Task<List<TEntity>>? EntityRequestTask { get; set; } = null;
+		public Task<List<TEntity>>? EntitiesRequestTask { get; set; } = null;
+		public Task<TEntity?>? EntityRequestTask { get; set; } = null;
 		public Task? EntityDeleteTask { get; set; } = null;
 		public Task? EntityCreateTask { get; set; } = null;
 
@@ -19,13 +21,24 @@ namespace View
 		public async Task<List<TEntity>> RequestEntitiesAsync()
 		{
 			EntitiesRequested?.Invoke();
-			if (EntityRequestTask == null)
+			if (EntitiesRequestTask == null)
 			{
 				return Entities;
 			}
 
-			Entities = await EntityRequestTask;
+			Entities = await EntitiesRequestTask;
 			return Entities;
+		}
+
+		public async Task<TEntity?>? RequestEntityAsync(int id)
+		{
+			EntityRequested?.Invoke(id);
+			if (EntityRequestTask == null)
+			{
+				return default;
+			}
+
+			return await EntityRequestTask;
 		}
 
 		public async Task CreateEntityAsync(TEntity entity)

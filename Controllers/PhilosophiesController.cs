@@ -19,15 +19,20 @@ namespace BlazorApp.Controller
 			}
 		}
 
+		protected override void OnEntityRequested(int id)
+		{
+			m_view.EntityRequestTask = m_model.GetPhilosophyAsync(id);
+		}
+
 		protected override void OnEntityCreated(Philosophy obj)
 		{
 			m_view.EntityCreateTask = m_model.AddPhilosophyAsync(obj);
 		}
 
 
-		protected override void OnEntityRequested()
+		protected override void OnEntitiesRequested()
 		{
-			m_view.EntityRequestTask = m_model.GetPhilosophiesAsync();
+			m_view.EntitiesRequestTask = m_model.GetPhilosophiesAsync();
 		}
 	}
 }
