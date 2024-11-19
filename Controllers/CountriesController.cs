@@ -1,4 +1,4 @@
-﻿using Lab;
+﻿using Model;
 using View;
 
 namespace Controller

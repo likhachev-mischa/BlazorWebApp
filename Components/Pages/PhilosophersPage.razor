@@ -1,9 +1,15 @@
 ﻿@page "/philosophersPage"
 @rendermode InteractiveServer
-@using Lab
-@using View
+@using Model
+@using Microsoft.AspNetCore.Components.Authorization
 
+@inject UserAuthenticationStateProvider UserAuthenticationStateProvider
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@using View
+@using Authentication
 @inherits EntityBlazorPage<Philosopher>
+<UserInfoTemplate UserInfo="UserAuthenticationStateProvider.CurrentUser"></UserInfoTemplate>
+
 <h3>PhilosophersPage</h3>
 
 <EntityTableTemplate TEntity="Philosopher" TView="EntityView<Philosopher>" Entities="m_displayedEntityList" View="View">
@@ -46,17 +52,23 @@
 				<button type="submit">Create Philosopher</button>
 			</p>
 		</EditForm>
-		<p>
-			Filter:
-			<ReferencedEntityTemplate TEntity="Country" ReferencedEntity="m_referencedCountryFilter">
-				<EntityOption Context="optionContext">
-					<option value="@optionContext.CountryId">@optionContext.CountryName</option>
-				</EntityOption>
-			</ReferencedEntityTemplate>
-			<button class="btn btn-primary" @onclick="ApplyCountryFilter">Apply</button>
-		</p>
 
 	</EntityEditForm>
+	<OptionalEntityFilter>
+		<CascadingAuthenticationState>
+			<AuthorizeView Roles="user,admin">
+				<p>
+					Filter:
+					<ReferencedEntityTemplate TEntity="Country" ReferencedEntity="m_referencedCountryFilter">
+						<EntityOption Context="optionContext">
+							<option value="@optionContext.CountryId">@optionContext.CountryName</option>
+						</EntityOption>
+					</ReferencedEntityTemplate>
+					<button class="btn btn-primary" @onclick="ApplyCountryFilter">Apply</button>
+				</p>
+			</AuthorizeView>
+		</CascadingAuthenticationState>
+	</OptionalEntityFilter>
 	<PageButtons>
 		<button class="btn btn-primary" disabled="@m_isDecreasePageDisabled" @onclick="DecreasePage">Prev Page</button>
 		<button class="btn btn-primary" disabled="@m_isIncreasePageDisabled" @onclick="IncreasePage">Next Page</button>
@@ -66,7 +78,6 @@
 		<th>Name</th>
 		<th>Dob</th>
 		<th>Dod</th>
-		<th>Delete</th>
 	</EntityHeaderEntry>
 	<EntityTableEntry>
 		<td>@context.PhilosopherId</td>
@@ -81,4 +92,3 @@
 	</EntityDeleteButton>
 
 </EntityTableTemplate>
-

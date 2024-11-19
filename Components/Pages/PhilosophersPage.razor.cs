@@ -1,6 +1,7 @@
-﻿using Lab;
+﻿using Model;
 using Microsoft.AspNetCore.Components;
 using View;
+
 
 namespace BlazorApp.Components.Pages
 {

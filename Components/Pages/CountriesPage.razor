@@ -1,10 +1,12 @@
 ﻿@page "/countriesPage"
 @rendermode InteractiveServer
-@using Lab
+@using Model
 @using View
-@inherits EntityBlazorPage<Country> 
+@using Authentication
+@inherits EntityBlazorPage<Country>
+@inject Authentication.UserAuthenticationStateProvider UserAuthenticationStateProvider
+<UserInfoTemplate UserInfo="UserAuthenticationStateProvider.CurrentUser"></UserInfoTemplate>
 <h3>CountriesPage</h3>
-
 
 <EntityTableTemplate TEntity="Country" TView="EntityView<Country>" Entities="m_displayedEntityList" View="View">
 	<EntityEditForm>
@@ -25,7 +27,6 @@
 	<EntityHeaderEntry>
 		<th>Id</th>
 		<th>Name</th>
-		<th>Delete</th>
 	</EntityHeaderEntry>
 	<EntityTableEntry>
 		<td>@context.CountryId</td>

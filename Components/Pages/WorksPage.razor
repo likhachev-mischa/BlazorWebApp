@@ -1,8 +1,11 @@
 ﻿@page "/worksPage"
 @rendermode InteractiveServer
-@using Lab
+@using Model
 @using View
+@using Authentication
 @inherits EntityBlazorPage<Work>
+@inject UserAuthenticationStateProvider UserAuthenticationStateProvider
+<UserInfoTemplate UserInfo="UserAuthenticationStateProvider.CurrentUser"></UserInfoTemplate>
 <h3>WorksPage</h3>
 
 <EntityTableTemplate TEntity="Work" TView="EntityView<Work>" Entities="m_displayedEntityList" View="View">
@@ -36,7 +39,6 @@
 		<th>Name</th>
 		<th>Publishing Date</th>
 		<th>Philosopher Id</th>
-		<th>Delete</th>
 	</EntityHeaderEntry>
 	<EntityTableEntry>
 		<td>@context.WorkId</td>

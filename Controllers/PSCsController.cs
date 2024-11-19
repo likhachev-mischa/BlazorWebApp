@@ -1,8 +1,8 @@
 ﻿using Controller;
-using Lab;
+using Model;
 using View;
 
-namespace BlazorApp.Controller
+namespace Controller
 {
 	public class PSCsController : EntityController<PhilosopherStudentConnection>
 	{

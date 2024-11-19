@@ -1,4 +1,4 @@
-﻿using Lab;
+﻿using Model;
 
 namespace BlazorApp.Components.Pages
 {

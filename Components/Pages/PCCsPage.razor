@@ -1,8 +1,11 @@
 ﻿@page "/PCCsPage"
 @rendermode InteractiveServer
-@using Lab
+@using Model
 @using View
+@using Authentication
 @inherits EntityBlazorPage<PhilosopherCountryConnection>
+@inject UserAuthenticationStateProvider UserAuthenticationStateProvider
+<UserInfoTemplate UserInfo="UserAuthenticationStateProvider.CurrentUser"></UserInfoTemplate>
 <h3>PCCsPage</h3>
 
 <EntityTableTemplate TEntity="PhilosopherCountryConnection" TView="EntityView<PhilosopherCountryConnection>" Entities="m_displayedEntityList" View="View">

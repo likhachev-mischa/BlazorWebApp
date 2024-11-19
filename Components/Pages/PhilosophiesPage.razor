@@ -1,9 +1,12 @@
 ﻿@page "/philosophiesPage"
 @rendermode InteractiveServer
-@using Lab
+@using Model
 @using View
+@using Authentication
 
 @inherits EntityBlazorPage<Philosophy>
+@inject UserAuthenticationStateProvider UserAuthenticationStateProvider
+<UserInfoTemplate UserInfo="UserAuthenticationStateProvider.CurrentUser"></UserInfoTemplate>
 <h3>PhilosophiesPage</h3>
 
 <EntityTableTemplate TEntity="Philosophy" TView="EntityView<Philosophy>" Entities="m_displayedEntityList" View="View">
@@ -26,7 +29,6 @@
 	<EntityHeaderEntry>
 		<th>Id</th>
 		<th>Name</th>
-		<th>Delete</th>
 	</EntityHeaderEntry>
 	<EntityTableEntry>
 		<td>@context.PhilosophyId</td>

@@ -1,7 +1,60 @@
 ﻿@page "/"
+@using Microsoft.AspNetCore.Components.Authorization
+@using Authentication
+
+@rendermode InteractiveServer
+@inject UserAuthenticationStateProvider UserAuthenticationStateProvider
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
+<CascadingAuthenticationState>
+	<AuthorizeView>
+		<Authorized>
+			<h3>Welcome @UserAuthenticationStateProvider.CurrentUser.Username !</h3>
+			@if (UserAuthenticationStateProvider.CurrentUser.AvatarPath != "")
+			{
+				<img src="@UserAuthenticationStateProvider.CurrentUser.AvatarPath" alt="Avatar" width="300" height="200" class="img-responsive"/>
+			}
+			<br/>
+			@if (m_images != null)
+			{
+				<p>
+					Select avatar :
+					<select @bind="@m_selectedImage">
+						<option value="">None</option>
+						@foreach (var image in m_images)
+						{
+							<option value="@image">@image</option>
+						}
+					</select>
+					<button class="btn btn-primary" @onclick="ApplyAvatar">Apply</button>
+				</p>
+			}
+			@if (m_selectedImage != "")
+			{
+				<img src="@m_selectedImage" alt="SelectionAvatar" width="300" height="200" class="img-responsive"/>
+			}
+			<p>
+				<button class="btn btn-primary" @onclick="Logout">Logout</button>
+			</p>
+		</Authorized>
+		<NotAuthorized Context="nonauthContext">
+			<h3>Welcome guest user!</h3>
+			<h4>@m_message</h4>
+			<EditForm EditContext="m_dataContext" OnSubmit="LoginAsync">
+				<p>
+					Login: <br/>
+					<InputText @bind-value="@m_userData.Login"></InputText>
+				</p>
+				<p>
+					Password: <br/>
+					<InputText @bind-value="@m_userData.Password" type="password"></InputText>
+				</p>
+				<p>
+					<button type="submit">Login</button>
+				</p>
+			</EditForm>
+		</NotAuthorized>
+	</AuthorizeView>
+</CascadingAuthenticationState>

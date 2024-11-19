@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Lab
+namespace Model
 {
 	public class PhilosophersDbStorage
 	{

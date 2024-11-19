@@ -1,0 +1,30 @@
+﻿@using Authentication
+@if (UserInfo != null)
+{
+	<div>
+		<h4>Current user: </h4>
+		@if (UserInfo.AvatarPath != "")
+		{
+			<img src="@UserInfo.AvatarPath" alt="Avatar" width="75" height="75" class="img-responsive"/>
+		}
+<p></p>
+		Name: @UserInfo.Username <br/>
+		Roles:
+		@foreach (var role in UserInfo.Roles)
+		{
+			@role
+		}
+	</div>
+}
+else
+{
+	<div>
+		<h4>Guest user mode</h4>
+	</div>
+}
+
+@code
+{
+	[Parameter, EditorRequired]
+	public User? UserInfo { get; set; }
+}

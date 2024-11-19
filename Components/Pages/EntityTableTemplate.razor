@@ -1,8 +1,15 @@
 ﻿@typeparam TEntity
+@using Microsoft.AspNetCore.Components.Authorization
 @typeparam TView;
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <div>
-	@EntityEditForm
+	<CascadingAuthenticationState>
+		<AuthorizeView Roles="admin">
+			@EntityEditForm
+		</AuthorizeView>
+	</CascadingAuthenticationState>
+	@OptionalEntityFilter
 	@PageButtons
 
 	@if (Entities == null)
@@ -17,6 +24,13 @@
 			<thead>
 			<tr>
 				@EntityHeaderEntry
+
+				<CascadingAuthenticationState>
+					<AuthorizeView Roles="admin">
+						<th>Delete</th>
+					</AuthorizeView>
+				</CascadingAuthenticationState>
+
 			</tr>
 			</thead>
 			<tbody>
@@ -24,7 +38,12 @@
 			{
 				<tr>
 					@EntityTableEntry(entity)
-					@EntityDeleteButton(entity)
+
+					<CascadingAuthenticationState>
+						<AuthorizeView Roles="admin">
+							@EntityDeleteButton(entity)
+						</AuthorizeView>
+					</CascadingAuthenticationState>
 				</tr>
 			}
 			</tbody>
@@ -52,6 +71,8 @@
 
 	[Parameter, EditorRequired]
 	public RenderFragment EntityEditForm { get; set; }
+	[Parameter]
+	public RenderFragment OptionalEntityFilter{ get; set; }
 
 	[Parameter, EditorRequired]
 	public IReadOnlyList<TEntity>? Entities { get; set; }
