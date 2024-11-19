@@ -6,8 +6,8 @@ namespace Lab
     {
         public PhilosopherContext()
         {
-            //    Database.EnsureDeleted();
-            Database.EnsureCreated();
+		//	Database.EnsureDeleted();
+			Database.EnsureCreated();
         }
 
         public DbSet<Philosopher> Philosophers { get; set; } = null!;

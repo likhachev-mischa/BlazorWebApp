@@ -21,13 +21,12 @@ namespace BlazorApp.Components.Pages
 		protected void UpdateButtonStatus()
 		{
 			m_isDecreasePageDisabled = m_currentPage <= 1;
-			m_isIncreasePageDisabled = (m_currentPage + 1) * m_pageSize >= m_entityList.Count;
+			m_isIncreasePageDisabled = m_entityList.Count - (m_currentPage) * m_pageSize <= 0;
 		}
 
 		protected void UpdateDisplayList()
 		{
-			int length = m_entityList.Count - (m_currentPage * m_pageSize) + 1;
-			length = length <= 0 ? m_pageSize : length;
+			int length = m_entityList.Count - (m_currentPage-1) * m_pageSize;
 			m_displayedEntityList = m_entityList.Slice(Math.Max((m_currentPage - 1) * m_pageSize, 0),
 				Math.Min(length, m_pageSize));
 
@@ -54,18 +53,13 @@ namespace BlazorApp.Components.Pages
 
 		protected void IncreasePage()
 		{
-			if ((m_currentPage + 1) * m_pageSize > m_entityList.Count)
-			{
-				return;
-			}
-
 			++m_currentPage;
 			UpdateDisplayList();
 		}
 
 		protected void DecreasePage()
 		{
-			m_currentPage = Math.Max(1, m_currentPage - 1);
+			--m_currentPage;
 			UpdateDisplayList();
 		}
 	}
