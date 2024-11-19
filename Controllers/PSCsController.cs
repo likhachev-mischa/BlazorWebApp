@@ -28,11 +28,11 @@ namespace BlazorApp.Controller
 
 		protected override void OnEntityDeleted(int id)
 		{
-			PhilosopherCountryConnection? pcc = m_model.GetPcc(id);
+			PhilosopherStudentConnection? psc = m_model.GetPsc(id);
 
-			if (pcc != null)
+			if (psc != null)
 			{
-				m_view.EntityDeleteTask = m_model.RemovePccAsync(pcc);
+				m_view.EntityDeleteTask = m_model.RemovePscAsync(psc);
 			}
 		}
 

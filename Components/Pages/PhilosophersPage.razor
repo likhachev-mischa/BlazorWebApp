@@ -25,12 +25,11 @@
 				<button type="submit">Create Philosopher</button>
 			</p>
 		</EditForm>
-		<PageButtons>
-			<button class="btn btn-primary" disabled ="@m_isDecreasePageDisabled" @onclick="DecreasePage">Prev Page</button>
-			<button class="btn btn-primary" disabled ="@m_isIncreasePageDisabled" @onclick="IncreasePage">Next Page</button>
-		</PageButtons>
 	</EntityEditForm>
-
+	<PageButtons>
+		<button class="btn btn-primary" disabled="@m_isDecreasePageDisabled" @onclick="DecreasePage">Prev Page</button>
+		<button class="btn btn-primary" disabled="@m_isIncreasePageDisabled" @onclick="IncreasePage">Next Page</button>
+	</PageButtons>
 	<EntityHeaderEntry>
 		<th>Id</th>
 		<th>Name</th>
@@ -38,16 +37,18 @@
 		<th>Dod</th>
 		<th>Delete</th>
 	</EntityHeaderEntry>
-
 	<EntityTableEntry>
 		<td>@context.PhilosopherId</td>
 		<td>@context.PhilosopherName</td>
 		<td>@context.PhilosopherDob</td>
 		<td>@context.PhilosopherDod</td>
+	</EntityTableEntry>
+	<EntityDeleteButton>
 		<td>
 			<button class="btn btn-primary" @onclick="() => DeleteEntityAsync(context.PhilosopherId)">Delete</button>
 		</td>
-	</EntityTableEntry>
+	</EntityDeleteButton>
+
 
 </EntityTableTemplate>
 
@@ -55,7 +56,13 @@
 @code
 {
 	PhilosopherData m_philosopherData = new();
-	
+
+	private class PhilosopherData
+	{
+		public string Name = "";
+		public DateOnly Dob;
+		public DateOnly Dod;
+	}
 
 	protected override async Task CreateEntity()
 	{
@@ -67,11 +74,5 @@
 		await FetchData();
 	}
 
-	private class PhilosopherData
-	{
-		public string Name = "";
-		public DateOnly Dob;
-		public DateOnly Dod;
-	}
 
 }

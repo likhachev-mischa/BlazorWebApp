@@ -272,10 +272,16 @@ namespace Lab
 			return psc;
 		}
 
+		public PhilosopherStudentConnection? GetPsc(int id)
+		{
+			return m_context.PhilosopherStudentConnections.FirstOrDefault(x => x.PhilosopherStudentConnectionId == id);
+		}
+
 		public async Task<List<PhilosopherStudentConnection>> GetPscsAsync()
 		{
 			return await m_context.PhilosopherStudentConnections.ToListAsync();
 		}
+
 
 		public async Task RemovePscAsync(PhilosopherStudentConnection psc)
 		{

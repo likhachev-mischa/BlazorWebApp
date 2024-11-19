@@ -3,6 +3,8 @@
 
 <div>
 	@EntityEditForm
+	@PageButtons
+
 	@if (Entities == null)
 	{
 		<p>
@@ -17,12 +19,12 @@
 				@EntityHeaderEntry
 			</tr>
 			</thead>
-			@PageButtons
 			<tbody>
 			@foreach (var entity in Entities)
 			{
 				<tr>
 					@EntityTableEntry(entity)
+					@EntityDeleteButton(entity)
 				</tr>
 			}
 			</tbody>
@@ -38,6 +40,9 @@
 
 	[Parameter, EditorRequired]
 	public RenderFragment<TEntity> EntityTableEntry { get; set; }
+
+	[Parameter, EditorRequired]
+	public RenderFragment<TEntity> EntityDeleteButton { get; set; }
 
 	[Parameter, EditorRequired]
 	public RenderFragment EntityHeaderEntry { get; set; }

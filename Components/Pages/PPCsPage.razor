@@ -2,9 +2,10 @@
 @rendermode InteractiveServer
 @using Lab
 @using View
+@inherits EntityBlazorPage<PhilosopherPhilosophyConnection>
 <h3>PPCsPage</h3>
 
-<EntityTableTemplate TEntity="PhilosopherPhilosophyConnection" TView="EntityView<PhilosopherPhilosophyConnection>" Entities="m_ppcs" View="PPCView">
+<EntityTableTemplate TEntity="PhilosopherPhilosophyConnection" TView="EntityView<PhilosopherPhilosophyConnection>" Entities="m_displayedEntityList" View="View">
 	<EntityEditForm>
 		<p>@m_message</p>
 		<EditForm Model="@m_pscData" OnSubmit="ValidateEntity">
@@ -24,13 +25,15 @@
 				Finish Date:<br/>
 				<InputDate @bind-Value="m_pscData.FinishDate"/>
 			</p>
-
-
 			<p>
 				<button type="submit">Create PCC</button>
 			</p>
 		</EditForm>
 	</EntityEditForm>
+	<PageButtons>
+		<button class="btn btn-primary" disabled="@m_isDecreasePageDisabled" @onclick="DecreasePage">Prev Page</button>
+		<button class="btn btn-primary" disabled="@m_isIncreasePageDisabled" @onclick="IncreasePage">Next Page</button>
+	</PageButtons>
 	<EntityHeaderEntry>
 		<th>Id</th>
 		<th>Philosopher Id</th>
@@ -44,36 +47,26 @@
 		<td>@context.Philosophy.PhilosophyId</td>
 		<td>@context.PeriodStart</td>
 		<td>@context.PeriodEnd</td>
-		<td>
-			<button class="btn btn-primary"  @onclick="() => DeleteEntityAsync(context.PhilosopherPhilosophyConnectionId)">Delete</button>
-		</td>
 	</EntityTableEntry>
+	<EntityDeleteButton>
+		<td>
+			<button class="btn btn-primary" @onclick="() => DeleteEntityAsync(context.PhilosopherPhilosophyConnectionId)">Delete</button>
+		</td>
+	</EntityDeleteButton>
 </EntityTableTemplate>
 
 @code
 {
-	[Inject]
-	public EntityView<PhilosopherPhilosophyConnection> PPCView { get; set; }
-
 	PCCData m_pscData = new();
-
-	private List<PhilosopherPhilosophyConnection>? m_ppcs;
-
 	private string m_message = "";
 
-	protected override async Task OnInitializedAsync()
-	{
-		m_ppcs = await PPCView.RequestEntitiesAsync();
-		StateHasChanged();
-	}
-
-	private void ValidateEntity()
+	private async void ValidateEntity()
 	{
 		m_message = "";
-		PPCView.UpdateReferencedEntities(m_pscData.PhilosopherId, typeof(Philosopher));
-		PPCView.UpdateReferencedEntities(m_pscData.PhilosophyId, typeof(Philosophy));
-		Philosopher? philosopher = (Philosopher?)PPCView.ReferencedEntities[typeof(Philosopher)];
-		Philosophy? philosophy = (Philosophy?)PPCView.ReferencedEntities[typeof(Philosophy)];
+		View.UpdateReferencedEntities(m_pscData.PhilosopherId, typeof(Philosopher));
+		View.UpdateReferencedEntities(m_pscData.PhilosophyId, typeof(Philosophy));
+		Philosopher? philosopher = (Philosopher?)View.ReferencedEntities[typeof(Philosopher)];
+		Philosophy? philosophy = (Philosophy?)View.ReferencedEntities[typeof(Philosophy)];
 		if (philosopher == null)
 		{
 			m_message = "Invalid philosopher id!";
@@ -84,30 +77,21 @@
 		}
 		else
 		{
-			CreateEntityAsync();
+			await CreateEntity();
 		}
 	}
 
-	private async void CreateEntityAsync()
+	protected override async Task CreateEntity()
 	{
-		await PPCView.CreateEntityAsync(new PhilosopherPhilosophyConnection()
+		await View.CreateEntityAsync(new PhilosopherPhilosophyConnection()
 		{
-			Philosopher = (Philosopher)PPCView.ReferencedEntities[typeof(Philosopher)],
-			Philosophy = (Philosophy)PPCView.ReferencedEntities[typeof(Philosophy)],
+			Philosopher = (Philosopher)View.ReferencedEntities[typeof(Philosopher)],
+			Philosophy = (Philosophy)View.ReferencedEntities[typeof(Philosophy)],
 			PeriodStart = m_pscData.StartDate,
 			PeriodEnd = m_pscData.FinishDate
 		});
-		m_ppcs = await PPCView.RequestEntitiesAsync();
-		StateHasChanged();
+		await FetchData();
 	}
-
-	private async void DeleteEntityAsync(int id)
-	{
-		await PPCView.DeleteEntityAsync(id);
-		m_ppcs = await PPCView.RequestEntitiesAsync();
-		StateHasChanged();
-	}
-
 
 	private class PCCData
 	{

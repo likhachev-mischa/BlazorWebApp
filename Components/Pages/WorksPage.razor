@@ -27,6 +27,10 @@
 			</p>
 		</EditForm>
 	</EntityEditForm>
+	<PageButtons>
+		<button class="btn btn-primary" disabled="@m_isDecreasePageDisabled" @onclick="DecreasePage">Prev Page</button>
+		<button class="btn btn-primary" disabled="@m_isIncreasePageDisabled" @onclick="IncreasePage">Next Page</button>
+	</PageButtons>
 	<EntityHeaderEntry>
 		<th>Id</th>
 		<th>Name</th>
@@ -39,10 +43,12 @@
 		<td>@context.WorkName</td>
 		<td>@context.PublishingDate</td>
 		<td>@context.Philosopher.PhilosopherId</td>
+	</EntityTableEntry>
+	<EntityDeleteButton>
 		<td>
 			<button class="btn btn-primary" @onclick="() => DeleteEntityAsync(context.WorkId)">Delete</button>
 		</td>
-	</EntityTableEntry>
+	</EntityDeleteButton>
 </EntityTableTemplate>
 
 @code
@@ -54,7 +60,7 @@
 
 	private async void ValidateEntity()
 	{
-		View.UpdateReferencedEntities(m_workData.PhilosopherId,typeof(Philosopher));
+		View.UpdateReferencedEntities(m_workData.PhilosopherId, typeof(Philosopher));
 		Philosopher? philosopher = (Philosopher?)View.ReferencedEntities[typeof(Philosopher)];
 
 		if (philosopher == null)

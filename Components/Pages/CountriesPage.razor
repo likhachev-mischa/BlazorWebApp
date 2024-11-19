@@ -18,6 +18,10 @@
 			</p>
 		</EditForm>
 	</EntityEditForm>
+	<PageButtons>
+		<button class="btn btn-primary" disabled="@m_isDecreasePageDisabled" @onclick="DecreasePage">Prev Page</button>
+		<button class="btn btn-primary" disabled="@m_isIncreasePageDisabled" @onclick="IncreasePage">Next Page</button>
+	</PageButtons>
 	<EntityHeaderEntry>
 		<th>Id</th>
 		<th>Name</th>
@@ -26,10 +30,12 @@
 	<EntityTableEntry>
 		<td>@context.CountryId</td>
 		<td>@context.CountryName</td>
+	</EntityTableEntry>
+	<EntityDeleteButton>
 		<td>
 			<button class="btn btn-primary" @onclick="() => DeleteEntityAsync(context.CountryId)">Delete</button>
 		</td>
-	</EntityTableEntry>
+	</EntityDeleteButton>
 </EntityTableTemplate>
 
 @code
@@ -47,7 +53,6 @@
 		{
 			CountryName = m_countryData.Name
 		});
-		m_entityList = await View.RequestEntitiesAsync();
-		StateHasChanged();
+		await FetchData();
 	}
 }

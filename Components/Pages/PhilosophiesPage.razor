@@ -2,12 +2,13 @@
 @rendermode InteractiveServer
 @using Lab
 @using View
+
+@inherits EntityBlazorPage<Philosophy>
 <h3>PhilosophiesPage</h3>
 
-<EntityTableTemplate TEntity="Philosophy" TView="EntityView<Philosophy>" Entities="m_philosophies" View="PhilosophyView">
+<EntityTableTemplate TEntity="Philosophy" TView="EntityView<Philosophy>" Entities="m_displayedEntityList" View="View">
 	<EntityEditForm>
-		<p>@m_message</p>
-		<EditForm Model="@m_philosophyData" OnSubmit="ValidateEntity">
+		<EditForm Model="@m_philosophyData" OnSubmit="CreateEntity">
 			<p>
 				Name:<br/>
 				<InputText @bind-Value="m_philosophyData.Name"/>
@@ -18,6 +19,10 @@
 			</p>
 		</EditForm>
 	</EntityEditForm>
+	<PageButtons>
+		<button class="btn btn-primary" disabled="@m_isDecreasePageDisabled" @onclick="DecreasePage">Prev Page</button>
+		<button class="btn btn-primary" disabled="@m_isIncreasePageDisabled" @onclick="IncreasePage">Next Page</button>
+	</PageButtons>
 	<EntityHeaderEntry>
 		<th>Id</th>
 		<th>Name</th>
@@ -26,51 +31,26 @@
 	<EntityTableEntry>
 		<td>@context.PhilosophyId</td>
 		<td>@context.PhilosophyName</td>
+	</EntityTableEntry>
+	<EntityDeleteButton>
 		<td>
 			<button class="btn btn-primary" @onclick="() => DeleteEntityAsync(context.PhilosophyId)">Delete</button>
 		</td>
-	</EntityTableEntry>
+	</EntityDeleteButton>
 </EntityTableTemplate>
 
 @code
 {
-	[Inject]
-	public EntityView<Philosophy> PhilosophyView { get; set; }
-
 	PhilosophyData m_philosophyData = new();
 
-	private List<Philosophy>? m_philosophies;
-
-	private string m_message = "";
-
-	protected override async Task OnInitializedAsync()
+	protected override async Task CreateEntity()
 	{
-		m_philosophies = await PhilosophyView.RequestEntitiesAsync();
-		StateHasChanged();
-	}
-
-	private void ValidateEntity()
-	{
-		CreateEntityAsync();
-	}
-
-	private async void CreateEntityAsync()
-	{
-		await PhilosophyView.CreateEntityAsync(new Philosophy()
+		await View.CreateEntityAsync(new Philosophy()
 		{
 			PhilosophyName = m_philosophyData.Name,
 		});
-		m_philosophies = await PhilosophyView.RequestEntitiesAsync();
-		StateHasChanged();
+		await FetchData();
 	}
-
-	private async void DeleteEntityAsync(int id)
-	{
-		await PhilosophyView.DeleteEntityAsync(id);
-		m_philosophies = await PhilosophyView.RequestEntitiesAsync();
-		StateHasChanged();
-	}
-
 
 	private class PhilosophyData
 	{
