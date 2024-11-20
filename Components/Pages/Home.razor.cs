@@ -7,8 +7,8 @@ namespace BlazorApp.Components.Pages
 	{
 		private class UserData
 		{
-			public string Login;
-			public string Password;
+			public string Login= "";
+			public string Password = "";
 		}
 
 		private string m_message = "";
